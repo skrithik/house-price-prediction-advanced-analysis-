@@ -1,10 +1,9 @@
-# house-price-prediction-advanced-analysis
-Below is a simplified `README.md` file that highlights the main steps and insights from your project without being overly formal:
+Below is an updated `README.md` file that includes the one-hot encoding step in the feature engineering section:
 
-```markdown
+
 # House Price Prediction System
 
-This project is built to show how detailed exploratory data analysis (EDA) and careful data handling can really improve model performance—even with a simple model. It walks through how we handled data preprocessing, outliers, selective feature engineering, and model optimization using Lasso regression and GridSearchCV.
+This project is built to show how detailed exploratory data analysis (EDA) and careful data handling can really improve model performance—even with a simple model. It walks through how we handled data preprocessing, outliers, selective feature engineering, and model optimization using Lasso regression with GridSearchCV.
 
 ## What We Did
 
@@ -44,30 +43,32 @@ This project is built to show how detailed exploratory data analysis (EDA) and c
   - `population_per_household` = population / households
 
 - **Handling Categorical Data:**  
-  Modified latitude and longitude categorical features by aggregating some categories and dropping redundant ones.
-
-- **Code Example:**
+  Modified latitude and longitude categorical features by:
+  - Creating new aggregated categories:
+    - `lat_category_high` and `lon_category_high` using one of the existing latitude and longitude bins.
+    - `lat_category_low` and `lon_category_low` by combining other bins.
+  - Dropping the redundant categorical columns.
+  
+- **One-Hot Encoding:**  
+  To better capture location information, the continuous `latitude` and `longitude` were binned and then one-hot encoded:
   ```python
-  # Ratio-based features
-  train_data_feature_engineered['rooms_per_household'] = train_data_feature_engineered['total_rooms'] / train_data_feature_engineered['households']
-  train_data_feature_engineered['population_per_household'] = train_data_feature_engineered['population'] / train_data_feature_engineered['households']
-  
-  # Backup and combine categorical latitude and longitude features
-  train_data_feature_engineered["lat_category_high"] = train_data_feature_engineered["lat_category_0"]
-  train_data_feature_engineered["lon_category_high"] = train_data_feature_engineered["lon_category_0"]
-  
-  train_data_feature_engineered["lat_category_low"] = train_data_feature_engineered["lat_category_3"] + train_data_feature_engineered["lat_category_4"]
-  train_data_feature_engineered["lon_category_low"] = train_data_feature_engineered["lon_category_3"] + train_data_feature_engineered["lon_category_4"]
-  
-  # Drop old categorical columns
-  lat_lon_cols = [col for col in train_data_feature_engineered.columns if "lat_category_" in col or "lon_category_" in col]
-  lat_lon_cols.remove("lat_category_high")
-  lat_lon_cols.remove("lon_category_high")
-  lat_lon_cols.remove("lat_category_low")
-  lat_lon_cols.remove("lon_category_low")
-  train_data_feature_engineered.drop(columns=lat_lon_cols, inplace=True)
-  ```
+  # Define number of bins
+  num_bins = 5  
 
+  # Create categorical latitude and longitude bins
+  train_data_feature_engineered['lat_category'] = pd.cut(train_data['latitude'], bins=num_bins, labels=False)
+  train_data_feature_engineered['lon_category'] = pd.cut(train_data['longitude'], bins=num_bins, labels=False)
+
+  # One-hot encode the categories
+  train_data_feature_engineered = pd.get_dummies(train_data_feature_engineered, columns=['lat_category', 'lon_category'])
+
+  # Drop raw lat/lon columns as they are no longer needed
+  train_data_feature_engineered.drop(columns=['latitude', 'longitude'], inplace=True)
+
+  # Show sample results
+  train_data_feature_engineered.head()
+  ```
+  
 ### 5. Model Evaluation & Optimization
 - **Model Choice:**  
   Used Lasso regression as a simple yet effective model.
@@ -77,7 +78,7 @@ This project is built to show how detailed exploratory data analysis (EDA) and c
   
 - **Hyperparameter Tuning:**  
   Applied GridSearchCV to find the best Lasso parameter (`alpha`) by plotting training vs. CV errors to choose the optimum value.
-
+  
 - **Pipeline Approach:**  
   Used a pipeline to streamline model training and hyperparameter tuning.
   
@@ -105,13 +106,13 @@ This project is built to show how detailed exploratory data analysis (EDA) and c
 
 ## Summary
 This project highlights:
-- Detailed and thorough EDA at multiple stages
-- Rigorous data preprocessing (handling missing values, duplicates, and outliers)
-- Selective feature engineering to improve model inputs
-- Effective model optimization using GridSearchCV and visualization of Lasso parameter vs. error
-- Optimization of hypermparameter by plotting graph between train and cross validation errors with respect to lasso parameter 
-
+- Detailed and thorough EDA at multiple stages.
+- Rigorous data preprocessing including handling missing values, duplicates, and outliers.
+- Selective feature engineering with the creation of ratio-based features and one-hot encoding of binned latitude and longitude.
+- Effective model optimization using GridSearchCV and visualization of Lasso parameter vs. error.
+- Optimization of model by plotting graph between train and cross-validation error with respect to lasso parameter
+  
 Even a simple model like Lasso regression can be made robust and accurate with careful data handling and tuning!
 ```
 
-This version focuses on clearly describing each step of the process and highlighting the key areas you mentioned without being overly formal. Feel free to modify any sections to better suit your needs.
+Feel free to adjust any sections further to match your specific project details or preferences.
