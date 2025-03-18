@@ -114,5 +114,3 @@ This project highlights:
   
 Even a simple model like Lasso regression can be made robust and accurate with careful data handling and tuning!
 ```
-
-Feel free to adjust any sections further to match your specific project details or preferences.
