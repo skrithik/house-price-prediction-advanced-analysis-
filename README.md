@@ -1,5 +1,5 @@
 Below is an updated `README.md` file that includes the one-hot encoding step in the feature engineering section:
-
+NOTE: This project may not be the best accurate system for house price prediction. The main aim of this project is to show how we can use different optimization techniques and data pre-processing methods that can be applied to actual real-life problems.
 
 # House Price Prediction System
 
